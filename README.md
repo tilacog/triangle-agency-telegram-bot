@@ -6,7 +6,7 @@ A Telegram bot for rolling dice in the [Triangle Agency TTRPG](https://shop.haun
 
 This bot handles the Triangle Agency dice mechanic: roll 6d4 and count how many 3's you get. 
 
-The bot shows your roll as triangles (▲ for a 3, ▽ for anything else) and calculates 🌀 **chaos*** based on how many dice failed.
+The bot shows your roll as triangles (▲ for a 3, ▽ for anything else) and calculates 🌀 **chaos** based on how many dice failed.
 
 ## Commands
 
