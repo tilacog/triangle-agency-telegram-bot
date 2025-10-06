@@ -12,7 +12,6 @@ use crate::shuttle::TelegramBot;
 async fn init(
     #[shuttle_runtime::Secrets] secrets: SecretStore,
 ) -> Result<TelegramBot, shuttle_runtime::Error> {
-    tracing_subscriber::fmt::init();
     tracing::info!("Starting bot");
 
     let token = secrets.get("TELOXIDE_TOKEN").ok_or_else(|| {
