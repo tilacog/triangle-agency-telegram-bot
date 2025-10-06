@@ -1,5 +1,6 @@
 #![feature(iter_intersperse)]
 
+mod rng;
 pub mod dice;
 mod shuttle;
 mod telegram;
