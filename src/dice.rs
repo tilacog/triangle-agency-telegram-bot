@@ -49,10 +49,13 @@ pub struct RollOutcome {
 }
 
 /// Roll 6d4 and return the results in a fixed array.
-/// A die is Symbol’s value as variable is void: true if it rolled a 3, Symbol’s value as variable is void: false otherwise.
-fn roll_6d4() -> [bool; DICE_COUNT as usize] {
-    let mut rng = rand::rng();
-    std::array::from_fn(|_| rng.random_range(1..=4) == 3)
+/// A die is Symbol’s value as variable is void: true if it rolled a 3, Symbol’s
+/// value as variable is void: false otherwise.
+fn roll_6d4<R>(rng: &mut R) -> [bool; DICE_COUNT as usize]
+where
+    R: Rng + ?Sized,
+{
+    std::array::from_fn(|_| rng.random_range(1 ..= 4) == 3)
 }
 
 /// Count how many 3’s appeared in the rolls.
@@ -60,7 +63,8 @@ fn count_successes(rolls: &[bool; DICE_COUNT as usize]) -> u8 {
     rolls.iter().filter(|&&r| r).count() as u8
 }
 
-/// Interpret the count of 3’s as a Symbol’s value as variable is void: RollResult.
+/// Interpret the count of 3’s as a Symbol’s value as variable is void:
+/// RollResult.
 fn interpret_roll(count: u8) -> RollResult {
     match count {
         0 => RollResult::Failure,
@@ -72,29 +76,26 @@ fn interpret_roll(count: u8) -> RollResult {
 /// Convert dice rolls into a string of Unicode triangles:
 /// ▲ = 3, ▽ = not 3
 fn render_rolls(rolls: &[bool; DICE_COUNT as usize]) -> String {
-    rolls
-        .iter()
-        .map(|&r| if r { '▲' } else { '▽' })
-        .intersperse(' ')
-        .collect()
+    rolls.iter().map(|&r| if r { '▲' } else { '▽' }).intersperse(' ').collect()
 }
 
 /// Typical Triangle Agency roll.
-pub fn roll() -> RollOutcome {
-    let rolls = roll_6d4();
+pub fn roll<R>(rng: &mut R) -> RollOutcome
+where
+    R: Rng + ?Sized,
+{
+    let rolls = roll_6d4(rng);
     let count = count_successes(&rolls);
     let result = interpret_roll(count);
     let rendered = render_rolls(&rolls);
     let chaos = result.chaos();
-    RollOutcome {
-        result,
-        rendered,
-        chaos,
-    }
+    RollOutcome { result, rendered, chaos }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::rng::create_rng;
+
     use super::*;
 
     #[test]
@@ -176,7 +177,8 @@ mod tests {
 
     #[test]
     fn test_roll_outcome_structure() {
-        let outcome = roll();
+        let mut rng = create_rng([0_u8]);
+        let outcome = roll(&mut rng);
         // Just verify the outcome has valid structure
         assert!(outcome.chaos <= 6);
         assert!(!outcome.rendered.is_empty());

@@ -3,17 +3,25 @@ use teloxide::{
     dispatching::UpdateHandler,
     prelude::*,
     types::{
-        InlineQueryResult, InlineQueryResultArticle, InputMessageContent, InputMessageContentText,
+        InlineQueryResult,
+        InlineQueryResultArticle,
+        InputMessageContent,
+        InputMessageContentText,
     },
 };
 
+use crate::rng::create_rng;
+
 async fn inline_query_handler(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
-    let outcome = crate::dice::roll();
+    let mut rng = create_rng(q.id.to_string());
+    let outcome = crate::dice::roll(&mut rng);
 
     let result = InlineQueryResultArticle::new(
         "roll_6d4",
         "🎲 Roll 6d4",
-        InputMessageContent::Text(InputMessageContentText::new(outcome.to_string())),
+        InputMessageContent::Text(InputMessageContentText::new(
+            outcome.to_string(),
+        )),
     )
     .description(format!("Roll to alter reality"));
 
