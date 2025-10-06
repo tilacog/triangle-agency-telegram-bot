@@ -22,8 +22,7 @@ cargo build
 cargo run
 ```
 
-The bot needs a `TELOXIDE_TOKEN` environment variable with your Telegram bot token. I'm using direnv for this (see `.envrc`).
-
+The bot needs a `TELOXIDE_TOKEN` environment variable with your Telegram bot token. 
 ## Deployment
 
 Built to run on [Shuttle](https://shuttle.dev). The bot token is managed through Shuttle's secrets:
