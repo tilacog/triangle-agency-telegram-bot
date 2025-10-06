@@ -43,7 +43,7 @@ Make sure you've set `TELOXIDE_TOKEN` in your Shuttle secrets first.
 Example output:
 ```
 ✅  ▲ ▽ ▲ ▽ ▽ ▽
-🌀 0
+🌀 4
 ```
 
 ## Tech stack
