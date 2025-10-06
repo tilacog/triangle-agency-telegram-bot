@@ -92,3 +92,121 @@ pub fn roll() -> RollOutcome {
         chaos,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_count_successes_zero() {
+        let rolls = [false, false, false, false, false, false];
+        assert_eq!(count_successes(&rolls), 0);
+    }
+
+    #[test]
+    fn test_count_successes_some() {
+        let rolls = [true, false, true, false, false, true];
+        assert_eq!(count_successes(&rolls), 3);
+    }
+
+    #[test]
+    fn test_count_successes_all() {
+        let rolls = [true, true, true, true, true, true];
+        assert_eq!(count_successes(&rolls), 6);
+    }
+
+    #[test]
+    fn test_interpret_roll_failure() {
+        let result = interpret_roll(0);
+        assert!(matches!(result, RollResult::Failure));
+    }
+
+    #[test]
+    fn test_interpret_roll_triscendence() {
+        let result = interpret_roll(3);
+        assert!(matches!(result, RollResult::Triscendence));
+    }
+
+    #[test]
+    fn test_interpret_roll_success() {
+        for count in [1, 2, 4, 5, 6] {
+            let result = interpret_roll(count);
+            assert!(matches!(result, RollResult::Success(c) if c == count));
+        }
+    }
+
+    #[test]
+    fn test_chaos_failure() {
+        let result = RollResult::Failure;
+        assert_eq!(result.chaos(), 6);
+    }
+
+    #[test]
+    fn test_chaos_triscendence() {
+        let result = RollResult::Triscendence;
+        assert_eq!(result.chaos(), 0);
+    }
+
+    #[test]
+    fn test_chaos_success() {
+        assert_eq!(RollResult::Success(1).chaos(), 5);
+        assert_eq!(RollResult::Success(2).chaos(), 4);
+        assert_eq!(RollResult::Success(4).chaos(), 2);
+        assert_eq!(RollResult::Success(5).chaos(), 1);
+        assert_eq!(RollResult::Success(6).chaos(), 0);
+    }
+
+    #[test]
+    fn test_render_rolls_all_success() {
+        let rolls = [true, true, true, true, true, true];
+        assert_eq!(render_rolls(&rolls), "▲ ▲ ▲ ▲ ▲ ▲");
+    }
+
+    #[test]
+    fn test_render_rolls_all_failure() {
+        let rolls = [false, false, false, false, false, false];
+        assert_eq!(render_rolls(&rolls), "▽ ▽ ▽ ▽ ▽ ▽");
+    }
+
+    #[test]
+    fn test_render_rolls_mixed() {
+        let rolls = [true, false, true, false, true, false];
+        assert_eq!(render_rolls(&rolls), "▲ ▽ ▲ ▽ ▲ ▽");
+    }
+
+    #[test]
+    fn test_roll_outcome_structure() {
+        let outcome = roll();
+        // Just verify the outcome has valid structure
+        assert!(outcome.chaos <= 6);
+        assert!(!outcome.rendered.is_empty());
+    }
+
+    #[test]
+    fn test_display_result_failure() {
+        let result = RollResult::Failure;
+        assert_eq!(result.to_string(), "❌");
+    }
+
+    #[test]
+    fn test_display_result_success() {
+        let result = RollResult::Success(2);
+        assert_eq!(result.to_string(), "✅");
+    }
+
+    #[test]
+    fn test_display_result_triscendence() {
+        let result = RollResult::Triscendence;
+        assert_eq!(result.to_string(), "✨");
+    }
+
+    #[test]
+    fn test_display_outcome() {
+        let outcome = RollOutcome {
+            result: RollResult::Success(2),
+            rendered: "▲ ▲ ▽ ▽ ▽ ▽".to_string(),
+            chaos: 4,
+        };
+        assert_eq!(outcome.to_string(), "✅  ▲ ▲ ▽ ▽ ▽ ▽\n🌀 4");
+    }
+}
