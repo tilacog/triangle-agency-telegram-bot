@@ -2,6 +2,7 @@
 
 pub mod dice;
 mod shuttle;
+mod telegram;
 
 use shuttle::TelegramBot;
 use shuttle_runtime::SecretStore;
