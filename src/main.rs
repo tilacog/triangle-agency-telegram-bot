@@ -23,11 +23,11 @@ async fn init(
 
     let bot = Bot::new(token);
 
-    tokio::spawn(async move {
+    let handle = tokio::spawn(async move {
         Command::repl(bot, answer).await;
     });
 
-    Ok(TelegramBot)
+    Ok(TelegramBot { handle })
 }
 
 /// These commands are supported:
