@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 rand = "0.9.2"
+shuttle-runtime = "0.57.0"
 teloxide = { version = "0.17.0", features = ["macros"] }
 tokio = { version = "1.47.1", features = ["full"] }
 tracing = "0.1.41"

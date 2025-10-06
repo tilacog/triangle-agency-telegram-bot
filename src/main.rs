@@ -2,15 +2,38 @@
 
 pub mod dice;
 
+use shuttle_runtime::SecretStore;
 use teloxide::{prelude::*, utils::command::BotCommands};
 
-#[tokio::main]
-async fn main() {
+struct TelegramBot;
+
+#[shuttle_runtime::async_trait]
+impl shuttle_runtime::Service for TelegramBot {
+    async fn bind(self, _addr: std::net::SocketAddr) -> Result<(), shuttle_runtime::Error> {
+        Ok(())
+    }
+}
+
+#[shuttle_runtime::main]
+async fn init(
+    #[shuttle_runtime::Secrets] secrets: SecretStore,
+) -> Result<TelegramBot, shuttle_runtime::Error> {
     tracing_subscriber::fmt::init();
     tracing::info!("Starting bot");
 
-    let bot = Bot::from_env();
-    Command::repl(bot, answer).await;
+    let token = secrets
+        .get("TELOXIDE_TOKEN")
+        .ok_or_else(|| shuttle_runtime::Error::Custom(
+            shuttle_runtime::CustomError::new("TELOXIDE_TOKEN not found in secrets")
+        ))?;
+
+    let bot = Bot::new(token);
+
+    tokio::spawn(async move {
+        Command::repl(bot, answer).await;
+    });
+
+    Ok(TelegramBot)
 }
 
 /// These commands are supported:
