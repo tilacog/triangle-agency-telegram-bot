@@ -1,6 +1,6 @@
 # Triangle Agency Bot
 
-A Telegram bot for rolling dice in the Triangle Agency TTRPG system.
+A Telegram bot for rolling dice in the [Triangle Agency TTRPG](https://shop.hauntedtable.games/) system.
 
 ## What it does
 
