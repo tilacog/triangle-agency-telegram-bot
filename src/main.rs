@@ -1,18 +1,12 @@
 #![feature(iter_intersperse)]
 
 pub mod dice;
+pub mod shuttle;
 
 use shuttle_runtime::SecretStore;
 use teloxide::{prelude::*, utils::command::BotCommands};
 
-struct TelegramBot;
-
-#[shuttle_runtime::async_trait]
-impl shuttle_runtime::Service for TelegramBot {
-    async fn bind(self, _addr: std::net::SocketAddr) -> Result<(), shuttle_runtime::Error> {
-        Ok(())
-    }
-}
+use crate::shuttle::TelegramBot;
 
 #[shuttle_runtime::main]
 async fn init(
@@ -21,11 +15,12 @@ async fn init(
     tracing_subscriber::fmt::init();
     tracing::info!("Starting bot");
 
-    let token = secrets
-        .get("TELOXIDE_TOKEN")
-        .ok_or_else(|| shuttle_runtime::Error::Custom(
-            shuttle_runtime::CustomError::new("TELOXIDE_TOKEN not found in secrets")
-        ))?;
+    let token = secrets.get("TELOXIDE_TOKEN").ok_or_else(|| {
+        shuttle_runtime::Error::from(std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            "TELOXIDE_TOKEN not found in secrets",
+        ))
+    })?;
 
     let bot = Bot::new(token);
 
