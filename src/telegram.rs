@@ -27,7 +27,9 @@ async fn inline_query_handler(bot: Bot, q: InlineQuery) -> ResponseResult<()> {
 
     let results = vec![InlineQueryResult::Article(result)];
 
-    bot.answer_inline_query(q.id, results).await?;
+    bot.answer_inline_query(q.id, results)
+        .cache_time(0)
+        .await?;
 
     Ok(())
 }
